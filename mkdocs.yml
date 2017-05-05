@@ -1,0 +1,4 @@
+site_name: django-rest-friendship
+site_description: DRF endpoints for django-friendship
+repo_url: https://github.com/dnmellen/django-rest-friendship
+site_dir: html
