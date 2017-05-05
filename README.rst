@@ -23,6 +23,19 @@ Install using ``pip``\ …
 .. code:: bash
 
     $ pip install django-rest-friendship
+    
+Add rest_friendship to your `INSTALLED_APPS`
+
+.. code:: python
+
+    INSTALLED_APPS = (
+    ...
+    'friendship',  # Django friendship
+    'rest_framework',  # Django REST Framework
+    'rest_friendship',  # Django REST Friendship
+    'rest_framework.authtoken',
+    ...
+    )
 
 Example
 -------
