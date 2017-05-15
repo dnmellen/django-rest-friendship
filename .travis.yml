@@ -23,3 +23,8 @@ install:
 
 script:
     - tox -e $TOX_ENV
+
+python:
+  - 3.5
+  - 3.6
+  - 2.7
