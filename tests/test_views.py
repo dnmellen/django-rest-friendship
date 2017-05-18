@@ -124,6 +124,7 @@ def test_list_sent_friend_requests():
     assert len(response.data) == 1
     assert response.data[0]['to_user'] == user1.id
 
+
 @pytest.mark.django_db(transaction=True)
 def test_list_rejected_friend_requests():
 
@@ -196,4 +197,4 @@ def test_reject_friend_request():
     client.force_authenticate(user=user1)
     response = client.post('/friendrequests/{}/reject/'.format(fr.id))
     assert response.status_code == 201
-    assert Friend.objects.are_friends(user1, user2) == False
+    assert not Friend.objects.are_friends(user1, user2)
