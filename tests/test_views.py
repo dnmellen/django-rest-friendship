@@ -2,23 +2,40 @@
 from __future__ import unicode_literals, print_function
 
 import pytest
+from django.apps import apps
 from rest_framework.test import APIClient
-from rest_friendship.serializers import get_user_serializer, UserSerializer
+from rest_friendship.serializers import UserSerializer
 from friendship.models import Friend, FriendshipRequest
-from tests.serializers import TestUserSerializer
+from tests.serializers import UserTestSerializer
 
 from .factories import UserFactory
 
+config = apps.get_app_config('rest_friendship')
+
 
 def test_settings_user_serializer():
-    assert get_user_serializer() == UserSerializer
+    assert config.user_serializer == UserSerializer
 
 
 def test_settings_user_serializer_with_specific_settings(settings):
     settings.REST_FRIENDSHIP = {
-        'USER_SERIALIZER': 'tests.serializers.TestUserSerializer'
+        'USER_SERIALIZER': 'tests.serializers.UserTestSerializer'
     }
-    assert get_user_serializer() == TestUserSerializer
+    assert config.user_serializer == UserTestSerializer
+
+
+@pytest.mark.django_db(transaction=True)
+def test_friend_request_without_message():
+    # Create users
+    user1 = UserFactory()
+    user2 = UserFactory()
+
+    friend_request = Friend.objects.add_friend(
+        user2,                               # The sender
+        user1,                               # The recipient
+    )
+
+    assert friend_request.message == ''
 
 
 @pytest.mark.django_db(transaction=True)
@@ -67,6 +84,18 @@ def test_create_friend_request():
     assert response.data['to_user'] == user2.id
     assert response.data['message'] == 'Hi there!'
     assert FriendshipRequest.objects.filter(pk=response.data['id']).count() == 1
+
+
+@pytest.mark.django_db(transaction=True)
+def test_create_friend_request_unauthenticated():
+
+    # Create users
+    user2 = UserFactory()
+
+    client = APIClient()
+    data = {'user_id': user2.id, 'message': 'Hi there!'}
+    response = client.post('/friends/', data=data)
+    assert response.status_code == 403
 
 
 @pytest.mark.django_db(transaction=True)
