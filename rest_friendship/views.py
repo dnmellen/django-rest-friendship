@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, print_function
+from __future__ import print_function, unicode_literals
 
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.decorators import detail_route, list_route
-from friendship.models import Friend, FriendshipRequest
+from django.apps import apps
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+from friendship.models import Friend, FriendshipRequest
+from rest_framework import status, viewsets
+from rest_framework.decorators import detail_route, list_route
+from rest_framework.response import Response
 
-from .serializers import get_user_serializer, FriendshipRequestSerializer
+from .serializers import FriendshipRequestSerializer
+
+config = apps.get_app_config('rest_friendship')
 
 
 class FriendViewSet(viewsets.ViewSet):
@@ -17,7 +19,8 @@ class FriendViewSet(viewsets.ViewSet):
     ViewSet for Friend model
     """
 
-    serializer_class = get_user_serializer()
+    permission_classes = config.permission_classes
+    serializer_class = config.user_serializer
 
     def list(self, request):
         friends = Friend.objects.friends(request.user)
@@ -64,6 +67,7 @@ class FriendshipRequestViewSet(viewsets.ViewSet):
     """
     ViewSet for FriendshipRequest model
     """
+    permission_classes = config.permission_classes
 
     @detail_route(methods=['post'])
     def accept(self, request, pk=None):
