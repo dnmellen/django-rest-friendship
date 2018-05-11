@@ -25,17 +25,21 @@ def test_settings_user_serializer_with_specific_settings(settings):
 
 
 @pytest.mark.django_db(transaction=True)
-def test_friend_request_without_message():
+def test_create_friend_request_without_message():
+
     # Create users
     user1 = UserFactory()
     user2 = UserFactory()
 
-    friend_request = Friend.objects.add_friend(
-        user2,                               # The sender
-        user1,                               # The recipient
-    )
-
-    assert friend_request.message == ''
+    client = APIClient()
+    client.force_authenticate(user=user1)
+    data = {'user_id': user2.id}
+    response = client.post('/friends/', data=data)
+    assert response.status_code == 201
+    assert response.data['from_user'] == user1.id
+    assert response.data['to_user'] == user2.id
+    assert response.data['message'] == ''
+    assert FriendshipRequest.objects.filter(pk=response.data['id']).count() == 1
 
 
 @pytest.mark.django_db(transaction=True)

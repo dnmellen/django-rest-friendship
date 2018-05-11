@@ -13,6 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class FriendshipRequestSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = FriendshipRequest
         fields = ('id', 'from_user', 'to_user', 'message', 'created', 'rejected', 'viewed')
