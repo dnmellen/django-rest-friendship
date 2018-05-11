@@ -212,6 +212,28 @@ def test_accept_friend_request():
 
 
 @pytest.mark.django_db(transaction=True)
+def test_accept_friend_request_of_other_user():
+
+    # Create users
+    user1 = UserFactory()
+    user2 = UserFactory()
+
+    Friend.objects.add_friend(
+        user2,                               # The sender
+        user1,                               # The recipient
+        message='Hi! I would like to add you'
+    )
+
+    fr = FriendshipRequest.objects.filter(to_user=user1).first()
+
+    client = APIClient()
+    client.force_authenticate(user=user2)
+    response = client.post('/friendrequests/{}/accept/'.format(fr.id))
+    assert response.status_code == 404
+    assert not Friend.objects.are_friends(user1, user2)
+
+
+@pytest.mark.django_db(transaction=True)
 def test_reject_friend_request():
 
     # Create users
@@ -231,3 +253,82 @@ def test_reject_friend_request():
     response = client.post('/friendrequests/{}/reject/'.format(fr.id))
     assert response.status_code == 201
     assert not Friend.objects.are_friends(user1, user2)
+
+
+@pytest.mark.django_db(transaction=True)
+def test_reject_friend_request_of_other_user():
+
+    # Create users
+    user1 = UserFactory()
+    user2 = UserFactory()
+
+    Friend.objects.add_friend(
+        user2,                               # The sender
+        user1,                               # The recipient
+        message='Hi! I would like to add you'
+    )
+
+    fr = FriendshipRequest.objects.filter(to_user=user1).first()
+
+    client = APIClient()
+    client.force_authenticate(user=user2)
+    response = client.post('/friendrequests/{}/reject/'.format(fr.id))
+    assert response.status_code == 404
+    assert not Friend.objects.are_friends(user1, user2)
+
+
+@pytest.mark.django_db(transaction=True)
+def test_delete_friend():
+
+    # Create users
+    user1 = UserFactory()
+    user2 = UserFactory()
+    user3 = UserFactory()
+
+    Friend.objects.add_friend(
+        user2,                               # The sender
+        user1,                               # The recipient
+        message='Hi! I would like to add you'
+    )
+
+    Friend.objects.add_friend(
+        user3,                               # The sender
+        user1,                               # The recipient
+        message='Hi! I would like to add you'
+    )
+
+    for friend_request in FriendshipRequest.objects.filter(to_user=user1):
+        friend_request.accept()
+
+    assert Friend.objects.are_friends(user1, user2)
+    client = APIClient()
+    client.force_authenticate(user=user1)
+    response = client.delete('/friends/{}/'.format(user2.id))
+    assert response.status_code == 204
+    assert response.data['message'] == 'deleted'
+    assert not Friend.objects.are_friends(user1, user2)
+
+
+@pytest.mark.django_db(transaction=True)
+def test_delete_friend_not_your_friend():
+
+    # Create users
+    user1 = UserFactory()
+    user2 = UserFactory()
+    user3 = UserFactory()
+
+    Friend.objects.add_friend(
+        user2,                               # The sender
+        user1,                               # The recipient
+        message='Hi! I would like to add you'
+    )
+
+    for friend_request in FriendshipRequest.objects.filter(to_user=user1):
+        friend_request.accept()
+
+    assert not Friend.objects.are_friends(user1, user3)
+    client = APIClient()
+    client.force_authenticate(user=user1)
+    response = client.delete('/friends/{}/'.format(user3.id))
+    assert response.status_code == 304
+    assert response.data['message'] == 'not deleted'

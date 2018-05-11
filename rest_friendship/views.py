@@ -62,6 +62,27 @@ class FriendViewSet(viewsets.ViewSet):
             status.HTTP_201_CREATED
         )
 
+    def destroy(self, request, pk=None):
+        """
+        Deletes a friend relationship
+
+        The user id specified in the URL will be removed from the current user's friends
+        """
+
+        user_friend = get_object_or_404(get_user_model(), pk=pk)
+
+        if Friend.objects.remove_friend(request.user, user_friend):
+            message = 'deleted'
+            status_code = status.HTTP_204_NO_CONTENT
+        else:
+            message = 'not deleted'
+            status_code = status.HTTP_304_NOT_MODIFIED
+
+        return Response(
+            {"message": message},
+            status=status_code
+        )
+
 
 class FriendshipRequestViewSet(viewsets.ViewSet):
     """
@@ -71,7 +92,7 @@ class FriendshipRequestViewSet(viewsets.ViewSet):
 
     @detail_route(methods=['post'])
     def accept(self, request, pk=None):
-        friendship_request = get_object_or_404(FriendshipRequest, pk=pk)
+        friendship_request = get_object_or_404(FriendshipRequest, pk=pk, to_user=request.user)
         friendship_request.accept()
         return Response(
             FriendshipRequestSerializer(friendship_request).data,
@@ -80,7 +101,7 @@ class FriendshipRequestViewSet(viewsets.ViewSet):
 
     @detail_route(methods=['post'])
     def reject(self, request, pk=None):
-        friendship_request = get_object_or_404(FriendshipRequest, pk=pk)
+        friendship_request = get_object_or_404(FriendshipRequest, pk=pk, to_user=request.user)
         friendship_request.reject()
         return Response(
             FriendshipRequestSerializer(friendship_request).data,
