@@ -18,7 +18,7 @@ def test_create_friend_request_without_message():
     client = APIClient()
     client.force_authenticate(user=user1)
     data = {'user_id': user2.id}
-    response = client.post('/friends/', data=data)
+    response = client.post('/friends/add_friend/', data=data)
     assert response.status_code == 201
     assert response.data['from_user'] == user1.id
     assert response.data['to_user'] == user2.id
@@ -51,7 +51,7 @@ def test_list_friends():
 
     client = APIClient()
     client.force_authenticate(user=user1)
-    response = client.get('/friends/')
+    response = client.get('/friends/add_friend/')
     assert response.status_code == 200
     assert len(response.data) == 2
 
@@ -66,7 +66,7 @@ def test_create_friend_request():
     client = APIClient()
     client.force_authenticate(user=user1)
     data = {'user_id': user2.id, 'message': 'Hi there!'}
-    response = client.post('/friends/', data=data)
+    response = client.post('/friends/add_friend/', data=data)
     assert response.status_code == 201
     assert response.data['from_user'] == user1.id
     assert response.data['to_user'] == user2.id
@@ -82,7 +82,7 @@ def test_create_friend_request_unauthenticated():
 
     client = APIClient()
     data = {'user_id': user2.id, 'message': 'Hi there!'}
-    response = client.post('/friends/', data=data)
+    response = client.post('/friends/add_friend/', data=data)
     assert response.status_code == 403
 
 
@@ -190,7 +190,7 @@ def test_accept_friend_request():
 
     client = APIClient()
     client.force_authenticate(user=user1)
-    response = client.post('/friendrequests/{}/accept/'.format(fr.id))
+    response = client.post('/friends/requests/accept_request/', data={'id':fr.id})
     assert response.status_code == 201
     assert Friend.objects.are_friends(user1, user2)
 
@@ -212,7 +212,7 @@ def test_accept_friend_request_of_other_user():
 
     client = APIClient()
     client.force_authenticate(user=user2)
-    response = client.post('/friendrequests/{}/accept/'.format(fr.id))
+    response = client.post('/friends/requests/accept_request/', data={'id':fr.id})
     assert response.status_code == 404
     assert not Friend.objects.are_friends(user1, user2)
 
@@ -234,7 +234,7 @@ def test_reject_friend_request():
 
     client = APIClient()
     client.force_authenticate(user=user1)
-    response = client.post('/friendrequests/{}/reject/'.format(fr.id))
+    response = client.post('/friends/requests/reject_request/', data={'id':fr.id})
     assert response.status_code == 201
     assert not Friend.objects.are_friends(user1, user2)
 
@@ -256,7 +256,7 @@ def test_reject_friend_request_of_other_user():
 
     client = APIClient()
     client.force_authenticate(user=user2)
-    response = client.post('/friendrequests/{}/reject/'.format(fr.id))
+    response = client.post('/friends/requests/reject_request/', data={'id':fr.id})
     assert response.status_code == 404
     assert not Friend.objects.are_friends(user1, user2)
 
@@ -283,11 +283,13 @@ def test_delete_friend():
 
     for friend_request in FriendshipRequest.objects.filter(to_user=user1):
         friend_request.accept()
+    
+    friend_obj = Friend.objects.are_friends(user1, user2)
 
-    assert Friend.objects.are_friends(user1, user2)
+    assert friend_obj
     client = APIClient()
     client.force_authenticate(user=user1)
-    response = client.delete('/friends/{}/'.format(user2.id))
+    response = client.post('/friends/remove_friend/', data={'id':friend_obj.id})
     assert response.status_code == 204
     assert response.data['message'] == 'deleted'
     assert not Friend.objects.are_friends(user1, user2)
@@ -309,10 +311,12 @@ def test_delete_friend_not_your_friend():
 
     for friend_request in FriendshipRequest.objects.filter(to_user=user1):
         friend_request.accept()
+        
+    friend_obj = Friend.objects.are_friends(user1, user3)
 
-    assert not Friend.objects.are_friends(user1, user3)
+    assert not friend_obj
     client = APIClient()
     client.force_authenticate(user=user1)
-    response = client.delete('/friends/{}/'.format(user3.id))
+    response = client.post('/friends/remove_friend/', data={'id':friend_obj.id})
     assert response.status_code == 304
     assert response.data['message'] == 'not deleted'
