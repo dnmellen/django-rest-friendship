@@ -6,7 +6,7 @@ def pytest_configure():
         
         REST_FRIENDSHIP = {
             'PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated', ],
-            'USER_SERIALIZER': 'api.serializers.UserSerializer',
+            'USER_SERIALIZER': 'rest_framework.serializers.FriendSerializer',
         },
         DEBUG_PROPAGATE_EXCEPTIONS=True,
         DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3',

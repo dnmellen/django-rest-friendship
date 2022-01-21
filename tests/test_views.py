@@ -65,7 +65,7 @@ def test_create_friend_request():
 
     client = APIClient()
     client.force_authenticate(user=user1)
-    data = {'user_id': user2.id, 'message': 'Hi there!'}
+    data = {'user_id': user2.username, 'message': 'Hi there!'}
     response = client.post('/friends/add_friend/', data=data)
     assert response.status_code == 201
     assert response.data['from_user'] == user1.id
@@ -81,7 +81,7 @@ def test_create_friend_request_unauthenticated():
     user2 = UserFactory()
 
     client = APIClient()
-    data = {'user_id': user2.id, 'message': 'Hi there!'}
+    data = {'user_id': user2.username, 'message': 'Hi there!'}
     response = client.post('/friends/add_friend/', data=data)
     assert response.status_code == 403
 
