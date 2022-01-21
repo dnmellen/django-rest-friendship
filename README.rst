@@ -6,7 +6,8 @@ django-rest-friendship
 Overview
 --------
 
-DRF endpoints for django-friendship
+An updated fork of `django-rest-friendship` to create DRF endpoints for django-friendship
+
 
 Requirements
 ------------
