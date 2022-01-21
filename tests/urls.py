@@ -1,5 +1,5 @@
-from django.conf.urls import include, url
+from django.urls import path, include
 
 urlpatterns = [
-    url('', include('rest_friendship.urls', namespace='rest_friendship')),
+    path('', include(('rest_friendship.urls', 'rest_friendship'), namespace='rest_friendship')),
 ]
