@@ -5,7 +5,6 @@ from django.shortcuts import get_object_or_404
 from friendship.models import Friend, FriendshipRequest
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 from .serializers import FriendshipRequestSerializer, FriendSerializer, FriendshipRequestResponseSerializer
 from django.utils.module_loading import import_string
@@ -25,33 +24,39 @@ class FriendViewSet(viewsets.ModelViewSet):
     ViewSet for Friend model
     """
     permission_classes = PERMISSION_CLASSES
-    serializer_class = None
+    serializer_class = USER_SERIALIZER
+    lookup_field = 'id'
 
     def list(self, request):
         friend_requests = Friend.objects.friends(user=request.user)
         self.queryset = friend_requests
-        self.http_method_names = ['get', 'head', 'options']
+        self.http_method_names = ['get', 'head', 'options', ]
         return Response(FriendSerializer(friend_requests, many=True).data)
 
     @ action(detail=False)
     def requests(self, request):
         friend_requests = Friend.objects.unrejected_requests(user=request.user)
         self.queryset = friend_requests
-        return Response(FriendshipRequestSerializer(friend_requests, many=True).data)
+        return Response(
+            FriendshipRequestSerializer(friend_requests, many=True).data)
 
     @ action(detail=False)
     def sent_requests(self, request):
         friend_requests = Friend.objects.sent_requests(user=request.user)
         self.queryset = friend_requests
-        return Response(FriendshipRequestSerializer(friend_requests, many=True).data)
+        return Response(
+            FriendshipRequestSerializer(friend_requests, many=True).data)
 
     @ action(detail=False)
     def rejected_requests(self, request):
         friend_requests = Friend.objects.rejected_requests(user=request.user)
         self.queryset = friend_requests
-        return Response(FriendshipRequestSerializer(friend_requests, many=True).data)
+        return Response(
+            FriendshipRequestSerializer(friend_requests, many=True).data)
 
-    @ action(detail=False, serializer_class=FriendshipRequestSerializer, methods=['post'])
+    @ action(detail=False,
+             serializer_class=FriendshipRequestSerializer,
+             methods=['post'])
     def add_friend(self, request, username=None):
         """
         Add a new friend with the post form below.
@@ -82,18 +87,16 @@ class FriendViewSet(viewsets.ModelViewSet):
             )
 
     @ action(detail=False, serializer_class=FriendSerializer, methods=['post'])
-    def remove_friend(self, request, id=None, username=None):
+    def remove_friend(self, request, username=None,):
         """
-        Deletes a friend relationship
+        Deletes a friend relationship.
 
-        The user id specified in the URL will be removed from the current user's friends
+        The user id specified in the URL will be
+        removed from the current user's friends.
         """
         try:
-            id = request.data.get('id', None)
-            username = request.data['username']
-
             user_friend = get_object_or_404(
-                User, pk=id, username=username)
+                User, username=request.data['username'])
 
             if Friend.objects.remove_friend(request.user, user_friend):
                 message = 'deleted'
@@ -112,7 +115,9 @@ class FriendViewSet(viewsets.ModelViewSet):
                 status.HTTP_400_BAD_REQUEST
             )
 
-    @ action(detail=False, serializer_class=FriendshipRequestResponseSerializer, methods=['post'])
+    @ action(detail=False,
+             serializer_class=FriendshipRequestResponseSerializer,
+             methods=['post'])
     def accept_request(self, request, id=None):
         """
         Accepts a friend request
@@ -121,24 +126,30 @@ class FriendViewSet(viewsets.ModelViewSet):
         """
         try:
             id = request.data.get('id', None)
-            friend_requests = Friend.objects.unrejected_requests(
-                user=request.user)
-            self.queryset = friend_requests
             friendship_request = get_object_or_404(
-                FriendshipRequest, pk=id, to_user=request.user)
+                FriendshipRequest, pk=id)
+
+            if not friendship_request.to_user == request.user:
+                return Response(
+                    {"message": "Request for current user not found."},
+                    status.HTTP_400_BAD_REQUEST
+                )
 
             friendship_request.accept()
             return Response(
                 {"message": "Request accepted, user added to friends."},
                 status.HTTP_201_CREATED
             )
+
         except Exception as e:
             return Response(
                 {'message': str(e)},
                 status.HTTP_400_BAD_REQUEST
             )
 
-    @ action(detail=False, serializer_class=FriendshipRequestResponseSerializer, methods=['post'])
+    @ action(detail=False,
+             serializer_class=FriendshipRequestResponseSerializer,
+             methods=['post'])
     def reject_request(self, request, id=None):
         """
         Rejects a friend request
@@ -147,14 +158,19 @@ class FriendViewSet(viewsets.ModelViewSet):
         """
         try:
             id = request.data.get('id', None)
-            friend_requests = Friend.objects.rejected_requests(
-                user=request.user)
-            self.queryset = friend_requests
             friendship_request = get_object_or_404(
-                FriendshipRequest, pk=id, to_user=request.user)
+                FriendshipRequest, pk=id)
+            if not friendship_request.to_user == request.user:
+                return Response(
+                    {"message": "Request for current user not found."},
+                    status.HTTP_400_BAD_REQUEST
+                )
+
             friendship_request.reject()
             return Response(
-                FriendshipRequestSerializer(friendship_request).data,
+                {
+                    "message": "Request rejected, user NOT added to friends."
+                },
                 status.HTTP_201_CREATED
             )
         except Exception as e:

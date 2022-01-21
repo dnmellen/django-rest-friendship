@@ -6,11 +6,12 @@ from friendship.models import FriendshipRequest
 class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'user_id', 'username', 'email')
+        fields = ('id', 'username', 'email')
 
 
 class FriendshipRequestSerializer(serializers.ModelSerializer):
     to_user = serializers.CharField()
+    from_user = serializers.StringRelatedField()
 
     class Meta:
         model = FriendshipRequest

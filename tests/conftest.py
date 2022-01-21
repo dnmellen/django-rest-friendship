@@ -3,10 +3,12 @@ def pytest_configure():
     from django.conf import settings
 
     settings.configure(
-        
-        REST_FRIENDSHIP = {
-            'PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated', ],
-            'USER_SERIALIZER': 'rest_framework.serializers.FriendSerializer',
+
+        REST_FRIENDSHIP={
+            'PERMISSION_CLASSES': [
+                'rest_framework.permissions.IsAuthenticated',
+            ],
+            'USER_SERIALIZER': 'rest_friendship.serializers.FriendSerializer',
         },
         DEBUG_PROPAGATE_EXCEPTIONS=True,
         DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3',
