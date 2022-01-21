@@ -1,25 +1,12 @@
 import pytest
-from django.apps import apps
+from django.conf import settings
 from rest_framework.test import APIClient
-from rest_friendship.serializers import UserSerializer
 from friendship.models import Friend, FriendshipRequest
+from rest_friendship.serializers import FriendSerializer
 from tests.serializers import UserTestSerializer
-
 from .factories import UserFactory
 
-config = apps.get_app_config('rest_friendship')
-
-
-def test_settings_user_serializer():
-    assert config.user_serializer == UserSerializer
-
-
-def test_settings_user_serializer_with_specific_settings(settings):
-    settings.REST_FRIENDSHIP = {
-        'USER_SERIALIZER': 'tests.serializers.UserTestSerializer'
-    }
-    assert config.user_serializer == UserTestSerializer
-
+# Add tests for serializers and settings import.
 
 @pytest.mark.django_db(transaction=True)
 def test_create_friend_request_without_message():
