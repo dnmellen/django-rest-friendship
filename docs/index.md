@@ -11,18 +11,17 @@
 
 # django-rest-friendship
 
-DRF endpoints for django-friendship
-
----
-
 ## Overview
 
-DRF endpoints for django-friendship
+An updated fork of `django-rest-friendship` to create DRF endpoints for django-friendship
+
 
 ## Requirements
 
-* Python (2.7, 3.3, 3.4)
-* Django (1.6, 1.7)
+* Python (3.8, 3.9, 3.10)
+* Django (4.0)
+* Django REST Framework (3.13)
+
 
 ## Installation
 
