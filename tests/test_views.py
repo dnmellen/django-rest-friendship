@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, print_function
-
 import pytest
 from django.apps import apps
 from rest_framework.test import APIClient
