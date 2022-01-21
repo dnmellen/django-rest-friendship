@@ -1,7 +1,8 @@
 # Minimum Django and REST framework version
-Django<2.0
-djangorestframework>=2.4.3
-django-friendship>=1.5.0
+
+Django>=4.0.1
+djangorestframework>=3.13.1
+django-friendship>=1.9.4
 
 # Test requirements
 pytest-django
