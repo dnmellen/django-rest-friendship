@@ -59,11 +59,13 @@ class FriendViewSet(viewsets.ModelViewSet):
              methods=['post'])
     def add_friend(self, request, username=None):
         """
-        Add a new friend with the post form below.
+        Add a new friend with POST data
+        - to_user
+        - message
         """
         try:
             # Creates a friend request from POST data:
-            # - username and/or email
+            # - username
             # - message
             username = request.data.get('to_user', '')
             friend_obj = Friend.objects.add_friend(
@@ -91,7 +93,7 @@ class FriendViewSet(viewsets.ModelViewSet):
         """
         Deletes a friend relationship.
 
-        The user id specified in the URL will be
+        The username specified in the POST data will be
         removed from the current user's friends.
         """
         try:
