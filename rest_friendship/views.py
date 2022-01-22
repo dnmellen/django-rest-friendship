@@ -1,4 +1,5 @@
 
+from asyncio import exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -80,38 +81,54 @@ class FriendViewSet(viewsets.ModelViewSet):
         # - message
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        username = serializer.validated_data.get('to_user')
-
-        friend_obj = Friend.objects.add_friend(
-            # The sender
-            request.user,
-            # The recipient
-            get_object_or_404(
-                User, username=username),
-            # Message (...or empty str)
-            message=request.data.get('message', '')
-        )
-        return Response(
-            FriendshipRequestSerializer(friend_obj).data,
-            status.HTTP_201_CREATED
+        to_user = get_object_or_404(
+            User,
+            username=serializer.validated_data.get('to_user')
         )
 
-    @ action(detail=False, serializer_class=FriendSerializer, methods=['post'])
-    def remove_friend(self, request, username=None,):
+        if not Friend.objects.are_friends(request.user, to_user):
+            friend_obj = Friend.objects.add_friend(
+                # The sender
+                request.user,
+                # The recipient
+                to_user,
+                # Message (...or empty str)
+                message=request.data.get('message', '')
+            )
+            return Response(
+                FriendshipRequestSerializer(friend_obj).data,
+                status.HTTP_201_CREATED
+            )
+        else:
+            return Response(
+                {"message": "User is already a friend."},
+                status.HTTP_400_BAD_REQUEST
+            )
+
+    @ action(detail=False, serializer_class=FriendshipRequestSerializer, methods=['post'])
+    def remove_friend(self, request):
         """
         Deletes a friend relationship.
 
         The username specified in the POST data will be
         removed from the current user's friends.
         """
-        user_friend = get_object_or_404(
-            User, username=request.data.get('username', username))
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        to_user = get_object_or_404(
+            User,
+            username=serializer.validated_data.get('to_user')
+        )
 
-        if Friend.objects.remove_friend(request.user, user_friend):
-            message = 'deleted'
+        if not Friend.objects.are_friends(request.user, to_user):
+            message = 'Friend not found.'
+            status_code = status.HTTP_400_BAD_REQUEST
+        elif Friend.objects.are_friends(request.user, to_user):
+            Friend.objects.remove_friend(request.user, to_user)
+            message = 'Friend deleted'
             status_code = status.HTTP_204_NO_CONTENT
         else:
-            message = 'not deleted'
+            message = 'Not modified'
             status_code = status.HTTP_304_NOT_MODIFIED
 
         return Response(

@@ -399,13 +399,13 @@ def test_delete_friend():
     client.force_authenticate(user=user1)
     response = client.post(
         '/friends/remove_friend/',
-        data={'username': user2.username}
+        data={'to_user': user2.username}
     )
 
     assert not Friend.objects.are_friends(user1, user2)
     assert Friend.objects.are_friends(user1, user3)
     assert response.status_code == 204
-    assert response.data['message'] == 'deleted'
+    assert response.data['message'] == 'Friend deleted'
 
 
 @pytest.mark.django_db(transaction=True)
@@ -422,21 +422,18 @@ def test_delete_friend_not_your_friend():
         message='Hi! I would like to add you'
     )
 
-    for friend_request in FriendshipRequest.objects.filter(to_user=user1):
-        friend_request.accept()
-
-    friend_obj = Friend.objects.are_friends(user1, user3)
+    FriendshipRequest.objects.first().accept()
 
     client = APIClient()
     client.force_authenticate(user=user1)
     response = client.post(
         '/friends/remove_friend/',
-        data={'username': user3.username}
+        data={'to_user': user3.username}
     )
 
-    assert not friend_obj
-    assert response.status_code == 304
-    assert response.data['message'] == 'not deleted'
+    assert not Friend.objects.are_friends(user1, user3)
+    assert response.status_code == 400
+    assert response.data['message'] == 'Friend not found.'
 
 
 @pytest.mark.django_db(transaction=True)
@@ -457,8 +454,8 @@ def test_delete_friend_does_not_exist():
     client.force_authenticate(user=user1)
     response = client.post(
         '/friends/remove_friend/',
-        data={'username': 'doesnotexist'}
+        data={'to_user': 'doesnotexist'}
     )
 
-    assert response.status_code == 404
     assert response.data['detail'] == 'Not found.'
+    assert response.status_code == 404
