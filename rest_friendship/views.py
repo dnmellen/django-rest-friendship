@@ -3,7 +3,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.utils.module_loading import import_string
-from html5lib import serialize
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
