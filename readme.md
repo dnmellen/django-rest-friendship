@@ -76,9 +76,9 @@ curl -X POST http://127.0.0.1:8000/friends/add_friend/ -H 'Authorization: Token 
 ```
 
 ```bash
-curl -X POST http://127.0.0.1:8000/friends/remove_friend/ -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' --data 'username=testuser'
+curl -X POST http://127.0.0.1:8000/friends/remove_friend/ -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' --data 'to_userFri=testuser'
 
-[{"message": "deleted"}]
+[{"message": "Friend deleted"}]
 ```
 
 #### Accept a Request with request ID

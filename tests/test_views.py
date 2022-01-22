@@ -132,6 +132,24 @@ def test_create_friend_request():
 
 
 @pytest.mark.django_db(transaction=True)
+def test_create_duplicate_friend_request():
+
+    # Create users
+    user1 = UserFactory()
+    user2 = UserFactory()
+
+    client = APIClient()
+    client.force_authenticate(user=user1)
+    data = {'to_user': user2.username, 'message': 'Hi there!'}
+    client.post('/friends/add_friend/', data=data)
+    response = client.post('/friends/add_friend/', data=data)
+
+    assert FriendshipRequest.objects.all().count() == 1
+    assert response.status_code == 400
+    assert response.data['message'] == 'You already requested friendship from this user.'
+
+
+@pytest.mark.django_db(transaction=True)
 def test_create_friend_request_user_not_found():
 
     # Create users

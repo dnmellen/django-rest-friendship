@@ -8,6 +8,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from friendship.models import Friend, FriendshipRequest
+from friendship.exceptions import AlreadyExistsError, AlreadyFriendsError
 from .serializers import FriendshipRequestSerializer, FriendSerializer, FriendshipRequestResponseSerializer
 
 
@@ -86,7 +87,7 @@ class FriendViewSet(viewsets.ModelViewSet):
             username=serializer.validated_data.get('to_user')
         )
 
-        if not Friend.objects.are_friends(request.user, to_user):
+        try:
             friend_obj = Friend.objects.add_friend(
                 # The sender
                 request.user,
@@ -99,9 +100,9 @@ class FriendViewSet(viewsets.ModelViewSet):
                 FriendshipRequestSerializer(friend_obj).data,
                 status.HTTP_201_CREATED
             )
-        else:
+        except (AlreadyExistsError, AlreadyFriendsError) as e:
             return Response(
-                {"message": "User is already a friend."},
+                {"message": str(e)},
                 status.HTTP_400_BAD_REQUEST
             )
 
