@@ -102,7 +102,7 @@ class FriendViewSet(viewsets.ModelViewSet):
         removed from the current user's friends.
         """
         user_friend = get_object_or_404(
-            User, username=request.data['username'])
+            User, username=request.data.get('username', ''))
 
         if Friend.objects.remove_friend(request.user, user_friend):
             message = 'deleted'
