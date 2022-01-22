@@ -1,5 +1,4 @@
 
-from asyncio import exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -121,16 +120,12 @@ class FriendViewSet(viewsets.ModelViewSet):
             username=serializer.validated_data.get('to_user')
         )
 
-        if not Friend.objects.are_friends(request.user, to_user):
-            message = 'Friend not found.'
-            status_code = status.HTTP_400_BAD_REQUEST
-        elif Friend.objects.are_friends(request.user, to_user):
-            Friend.objects.remove_friend(request.user, to_user)
-            message = 'Friend deleted'
+        if Friend.objects.remove_friend(request.user, to_user):
+            message = 'Friend deleted.'
             status_code = status.HTTP_204_NO_CONTENT
         else:
-            message = 'Not modified'
-            status_code = status.HTTP_304_NOT_MODIFIED
+            message = 'Friend not found.'
+            status_code = status.HTTP_400_BAD_REQUEST
 
         return Response(
             {"message": message},

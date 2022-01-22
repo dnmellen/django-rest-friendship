@@ -150,6 +150,25 @@ def test_create_duplicate_friend_request():
 
 
 @pytest.mark.django_db(transaction=True)
+def test_create_existing_friend():
+
+    # Create users
+    user1 = UserFactory()
+    user2 = UserFactory()
+
+    client = APIClient()
+    client.force_authenticate(user=user1)
+    data = {'to_user': user2.username, 'message': 'Hi there!'}
+    client.post('/friends/add_friend/', data=data)
+    FriendshipRequest.objects.first().accept()
+    response = client.post('/friends/add_friend/', data=data)
+
+    assert Friend.objects.all().count() == 2
+    assert response.status_code == 400
+    assert response.data['message'] == 'Users are already friends'
+
+
+@pytest.mark.django_db(transaction=True)
 def test_create_friend_request_user_not_found():
 
     # Create users
@@ -312,7 +331,7 @@ def test_accept_friend_request_not_found():
     client = APIClient()
     client.force_authenticate(user=user1)
     client.post('/friends/accept_request/', data={'id': fr.id})
-    
+
     # Post to the same url to confirm friend added and request deleted.
     response = client.post('/friends/accept_request/', data={'id': fr.id})
 
@@ -423,7 +442,7 @@ def test_delete_friend():
     assert not Friend.objects.are_friends(user1, user2)
     assert Friend.objects.are_friends(user1, user3)
     assert response.status_code == 204
-    assert response.data['message'] == 'Friend deleted'
+    assert response.data['message'] == 'Friend deleted.'
 
 
 @pytest.mark.django_db(transaction=True)

@@ -52,38 +52,3 @@ def pytest_configure():
             'django.contrib.auth.hashers.CryptPasswordHasher',
         ),
     )
-
-    try:
-        import oauth_provider  # NOQA
-        import oauth2  # NOQA
-    except ImportError:
-        pass
-    else:
-        settings.INSTALLED_APPS += (
-            'oauth_provider',
-        )
-
-    try:
-        import provider  # NOQA
-    except ImportError:
-        pass
-    else:
-        settings.INSTALLED_APPS += (
-            'provider',
-            'provider.oauth2',
-        )
-
-    # guardian is optional
-    try:
-        import guardian  # NOQA
-    except ImportError:
-        pass
-    else:
-        settings.ANONYMOUS_USER_ID = -1
-        settings.AUTHENTICATION_BACKENDS = (
-            'django.contrib.auth.backends.ModelBackend',
-            'guardian.backends.ObjectPermissionBackend',
-        )
-        settings.INSTALLED_APPS += (
-            'guardian',
-        )
