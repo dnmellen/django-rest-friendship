@@ -2,12 +2,12 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from friendship.models import Friend, FriendshipRequest
+from django.utils.module_loading import import_string
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from friendship.models import Friend, FriendshipRequest
 from .serializers import FriendshipRequestSerializer, FriendSerializer, FriendshipRequestResponseSerializer
-from django.utils.module_loading import import_string
 
 
 User = get_user_model()

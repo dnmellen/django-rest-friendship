@@ -1,6 +1,6 @@
 # django-rest-friendship
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/sflems/django-rest-framework?label=version)](https://github.com/sflems/django-rest-framework/releases) [![Django Tests](https://github.com/sflems/django-rest-friendship/actions/workflows/python-app.yml/badge.svg)](https://github.com/sflems/django-rest-friendship/actions/workflows/python-app.yml)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/sflems/django-rest-framework?label=version)](https://github.com/sflems/django-rest-framework/releases) [![Django Tests](https://github.com/sflems/django-rest-friendship/actions/workflows/python-package.yml/badge.svg)](https://github.com/sflems/django-rest-friendship/actions/workflows/python-package.yml)
 
 ## Overview
 
@@ -46,6 +46,17 @@ Also add settings for `REST_FRIENDSHIP`
 
 ```
 
+And don't forget to add the following to your project `urls.py`
+
+```python
+    urlpatterns = [
+        ...
+        path('', include('rest_friendship.urls')),
+        ...
+    ]
+    
+```
+
 ## Examples
 
 #### Get Friends List
@@ -59,9 +70,9 @@ curl -LX GET http://127.0.0.1:8000/friends/ -H 'Authorization: Token 16bd63ca665
 #### Add/Remove Friends
 
 ```bash
-curl -X POST http://127.0.0.1:8000/friends/add_friend/ -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' --data 'to_user=testuser&message=Hello friend'
+curl -X POST http://127.0.0.1:8000/friends/add_friend/ -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' --data 'to_user=testuser&message=Hello+friend'
 
-{"id":4,"from_user":"flems17@gmail.com","to_user":"testuser@piboy.ca","message":"","created":"2022-01-22T04:21:43.593950Z","rejected":null,"viewed":null} 
+{"id":4,"from_user":"scott@gmail.com","to_user":"testuser@piboy.ca","message":"Hello friend","created":"2022-01-22T04:21:43.593950Z","rejected":null,"viewed":null} 
 ```
 
 ```bash

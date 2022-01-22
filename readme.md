@@ -46,6 +46,17 @@ Also add settings for `REST_FRIENDSHIP`
 
 ```
 
+And don't forget to add the following to your project `urls.py`
+
+```python
+    urlpatterns = [
+        ...
+        path('', include('rest_friendship.urls')),
+        ...
+    ]
+    
+```
+
 ## Examples
 
 #### Get Friends List
