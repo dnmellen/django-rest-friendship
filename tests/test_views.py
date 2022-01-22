@@ -277,6 +277,33 @@ def test_accept_friend_request():
 
 
 @pytest.mark.django_db(transaction=True)
+def test_accept_friend_request_not_found():
+
+    # Create users
+    user1 = UserFactory()
+    user2 = UserFactory()
+
+    Friend.objects.add_friend(
+        user2,  # The sender
+        user1,  # The recipient
+        message='Hi! I would like to add you'
+    )
+
+    fr = FriendshipRequest.objects.filter(to_user=user1).first()
+
+    client = APIClient()
+    client.force_authenticate(user=user1)
+    client.post('/friends/accept_request/', data={'id': fr.id})
+    
+    # Post to the same url to confirm friend added and request deleted.
+    response = client.post('/friends/accept_request/', data={'id': fr.id})
+
+    assert Friend.objects.are_friends(user1, user2)
+    assert response.status_code == 404
+    assert response.data['detail'] == 'Not found.'
+
+
+@pytest.mark.django_db(transaction=True)
 def test_accept_friend_request_of_other_user():
 
     # Create users
