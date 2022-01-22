@@ -36,14 +36,14 @@ def test_list_friends():
     user3 = UserFactory()
 
     Friend.objects.add_friend(
-        user2,                               # The sender
-        user1,                               # The recipient
+        user2,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
     Friend.objects.add_friend(
-        user3,                               # The sender
-        user1,                               # The recipient
+        user3,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
@@ -57,6 +57,57 @@ def test_list_friends():
     assert User.objects.all().count() == 3
     assert response.status_code == 200
     assert len(response.data) == 2
+
+
+@pytest.mark.django_db(transaction=True)
+def test_detail_friend():
+
+    # Create users
+    user1 = UserFactory()
+    user2 = UserFactory()
+
+    Friend.objects.add_friend(
+        user2,  # The sender
+        user1,  # The recipient
+        message='Hi! I would like to add you'
+    )
+
+    FriendshipRequest.objects.first().accept()
+
+    client = APIClient()
+    client.force_authenticate(user=user1)
+    response = client.get('/friends/{}/'.format(user2.pk))
+
+    assert response.status_code == 200
+    assert len(response.data) == 3
+    assert response.data['id'] == user2.id
+    assert response.data['username'] == user2.username
+    assert response.data['email'] == user2.email
+
+
+@pytest.mark.django_db(transaction=True)
+def test_detail_not_your_friend():
+
+    # Create users
+    user1 = UserFactory()
+    user2 = UserFactory()
+    user3 = UserFactory()
+
+    Friend.objects.add_friend(
+        user2,  # The sender
+        user1,  # The recipient
+        message='Hi! I would like to add you'
+    )
+
+    FriendshipRequest.objects.first().accept()
+
+    client = APIClient()
+    client.force_authenticate(user=user1)
+    response = client.get('/friends/{}/'.format(user3.pk))
+
+    assert response.status_code == 400
+    assert len(response.data) == 1
+    assert response.data['message'] == 'Friend relationship not found for user.'
 
 
 @pytest.mark.django_db(transaction=True)
@@ -81,6 +132,23 @@ def test_create_friend_request():
 
 
 @pytest.mark.django_db(transaction=True)
+def test_create_friend_request_user_not_found():
+
+    # Create users
+    user1 = UserFactory()
+
+    client = APIClient()
+    client.force_authenticate(user=user1)
+
+    data = {'to_user': 'accountdoesntexist', 'message': 'Hi there!'}
+    response = client.post('/friends/add_friend/', data=data)
+
+    assert response.status_code == 404
+    assert FriendshipRequest.objects.all().count() == 0
+    assert response.data['detail'] == 'Not found.'
+
+
+@pytest.mark.django_db(transaction=True)
 def test_create_friend_request_unauthenticated():
 
     # Create users
@@ -101,23 +169,25 @@ def test_list_friend_requests():
     user3 = UserFactory()
 
     Friend.objects.add_friend(
-        user2,                               # The sender
-        user1,                               # The recipient
+        user2,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
     Friend.objects.add_friend(
-        user3,                               # The sender
-        user1,                               # The recipient
+        user3,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
     client = APIClient()
     client.force_authenticate(user=user1)
     response = client.get('/friends/requests/')
+
     assert response.status_code == 200
     assert len(response.data) == 2
-    assert response.data[0]['to_user'] == user1.username
+    assert response.data[0]['from_user'] == user2.username
+    assert response.data[1]['from_user'] == user3.username
 
 
 @pytest.mark.django_db(transaction=True)
@@ -129,23 +199,25 @@ def test_list_sent_friend_requests():
     user3 = UserFactory()
 
     Friend.objects.add_friend(
-        user2,                               # The sender
-        user1,                               # The recipient
+        user2,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
     Friend.objects.add_friend(
-        user3,                               # The sender
-        user1,                               # The recipient
+        user2,  # The sender
+        user3,  # The recipient
         message='Hi! I would like to add you'
     )
 
     client = APIClient()
     client.force_authenticate(user=user2)
     response = client.get('/friends/sent_requests/')
+
     assert response.status_code == 200
-    assert len(response.data) == 1
+    assert len(response.data) == 2
     assert response.data[0]['to_user'] == user1.username
+    assert response.data[1]['to_user'] == user3.username
 
 
 @pytest.mark.django_db(transaction=True)
@@ -157,14 +229,14 @@ def test_list_rejected_friend_requests():
     user3 = UserFactory()
 
     Friend.objects.add_friend(
-        user2,                               # The sender
-        user1,                               # The recipient
+        user2,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
     Friend.objects.add_friend(
-        user3,                               # The sender
-        user1,                               # The recipient
+        user3,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
@@ -174,6 +246,7 @@ def test_list_rejected_friend_requests():
     client = APIClient()
     client.force_authenticate(user=user1)
     response = client.get('/friends/rejected_requests/')
+
     assert response.status_code == 200
     assert len(response.data) == 2
     assert response.data[0]['to_user'] == user1.username
@@ -187,8 +260,8 @@ def test_accept_friend_request():
     user2 = UserFactory()
 
     Friend.objects.add_friend(
-        user2,                               # The sender
-        user1,                               # The recipient
+        user2,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
@@ -197,6 +270,8 @@ def test_accept_friend_request():
     client = APIClient()
     client.force_authenticate(user=user1)
     response = client.post('/friends/accept_request/', data={'id': fr.id})
+
+    assert FriendshipRequest.objects.all().count() == 0
     assert response.status_code == 201
     assert Friend.objects.are_friends(user1, user2)
 
@@ -209,8 +284,8 @@ def test_accept_friend_request_of_other_user():
     user2 = UserFactory()
 
     Friend.objects.add_friend(
-        user2,                               # The sender
-        user1,                               # The recipient
+        user2,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
@@ -219,6 +294,7 @@ def test_accept_friend_request_of_other_user():
     client = APIClient()
     client.force_authenticate(user=user2)
     response = client.post('/friends/accept_request/', data={'id': fr.id})
+
     assert response.status_code == 400
     assert not Friend.objects.are_friends(user1, user2)
 
@@ -231,8 +307,8 @@ def test_reject_friend_request():
     user2 = UserFactory()
 
     Friend.objects.add_friend(
-        user2,                               # The sender
-        user1,                               # The recipient
+        user2,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
@@ -241,6 +317,7 @@ def test_reject_friend_request():
     client = APIClient()
     client.force_authenticate(user=user1)
     response = client.post('/friends/reject_request/', data={'id': fr.id})
+
     assert response.status_code == 201
     assert not Friend.objects.are_friends(user1, user2)
 
@@ -253,8 +330,8 @@ def test_reject_friend_request_of_other_user():
     user2 = UserFactory()
 
     Friend.objects.add_friend(
-        user2,                               # The sender
-        user1,                               # The recipient
+        user2,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
@@ -263,6 +340,7 @@ def test_reject_friend_request_of_other_user():
     client = APIClient()
     client.force_authenticate(user=user2)
     response = client.post('/friends/reject_request/', data={'id': fr.id})
+
     assert response.status_code == 400
     assert not Friend.objects.are_friends(user1, user2)
 
@@ -276,29 +354,31 @@ def test_delete_friend():
     user3 = UserFactory()
 
     Friend.objects.add_friend(
-        user2,                               # The sender
-        user1,                               # The recipient
+        user2,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
     Friend.objects.add_friend(
-        user3,                               # The sender
-        user1,                               # The recipient
+        user3,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
     for friend_request in FriendshipRequest.objects.filter(to_user=user1):
         friend_request.accept()
 
-    friend_obj = Friend.objects.are_friends(user1, user2)
-
-    assert friend_obj
     client = APIClient()
     client.force_authenticate(user=user1)
-    response = client.post('/friends/remove_friend/', data={'username': user2.username})
+    response = client.post(
+        '/friends/remove_friend/',
+        data={'username': user2.username}
+    )
+
+    assert not Friend.objects.are_friends(user1, user2)
+    assert Friend.objects.are_friends(user1, user3)
     assert response.status_code == 204
     assert response.data['message'] == 'deleted'
-    assert not Friend.objects.are_friends(user1, user2)
 
 
 @pytest.mark.django_db(transaction=True)
@@ -310,8 +390,8 @@ def test_delete_friend_not_your_friend():
     user3 = UserFactory()
 
     Friend.objects.add_friend(
-        user2,                               # The sender
-        user1,                               # The recipient
+        user2,  # The sender
+        user1,  # The recipient
         message='Hi! I would like to add you'
     )
 
@@ -320,9 +400,38 @@ def test_delete_friend_not_your_friend():
 
     friend_obj = Friend.objects.are_friends(user1, user3)
 
-    assert not friend_obj
     client = APIClient()
     client.force_authenticate(user=user1)
-    response = client.post('/friends/remove_friend/', data={'username': user3.username})
+    response = client.post(
+        '/friends/remove_friend/',
+        data={'username': user3.username}
+    )
+
+    assert not friend_obj
     assert response.status_code == 304
     assert response.data['message'] == 'not deleted'
+
+
+@pytest.mark.django_db(transaction=True)
+def test_delete_friend_does_not_exist():
+    # Create users
+    user1 = UserFactory()
+    user2 = UserFactory()
+
+    Friend.objects.add_friend(
+        user2,  # The sender
+        user1,  # The recipient
+        message='Hi! I would like to add you'
+    )
+
+    FriendshipRequest.objects.first().accept()
+
+    client = APIClient()
+    client.force_authenticate(user=user1)
+    response = client.post(
+        '/friends/remove_friend/',
+        data={'username': 'doesnotexist'}
+    )
+
+    assert response.status_code == 404
+    assert response.data['detail'] == 'Not found.'

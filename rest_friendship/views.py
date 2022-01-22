@@ -25,13 +25,25 @@ class FriendViewSet(viewsets.ModelViewSet):
     """
     permission_classes = PERMISSION_CLASSES
     serializer_class = USER_SERIALIZER
-    lookup_field = 'id'
+    lookup_field = 'pk'
 
     def list(self, request):
         friend_requests = Friend.objects.friends(user=request.user)
         self.queryset = friend_requests
         self.http_method_names = ['get', 'head', 'options', ]
         return Response(FriendSerializer(friend_requests, many=True).data)
+
+    def retrieve(self, request, pk=None):
+        self.queryset = Friend.objects.friends(user=request.user)
+        requested_user = get_object_or_404(User, pk=pk)
+        if Friend.objects.are_friends(request.user, requested_user):
+            self.http_method_names = ['get', 'head', 'options', ]
+            return Response(FriendSerializer(requested_user, many=False).data)
+        else:
+            return Response(
+                {'message': "Friend relationship not found for user."},
+                status.HTTP_400_BAD_REQUEST
+            )
 
     @ action(detail=False)
     def requests(self, request):
@@ -63,30 +75,23 @@ class FriendViewSet(viewsets.ModelViewSet):
         - to_user
         - message
         """
-        try:
-            # Creates a friend request from POST data:
-            # - username
-            # - message
-            username = request.data.get('to_user', '')
-            friend_obj = Friend.objects.add_friend(
-                # The sender
-                request.user,
-                # The recipient
-                get_object_or_404(
-                    User, username=username),
-                # Message (...or empty str)
-                message=request.data.get('message', '')
-            )
-            return Response(
-                FriendshipRequestSerializer(friend_obj).data,
-                status.HTTP_201_CREATED
-            )
-
-        except Exception as e:
-            return Response(
-                {'message': str(e)},
-                status.HTTP_400_BAD_REQUEST
-            )
+        # Creates a friend request from POST data:
+        # - username
+        # - message
+        username = request.data.get('to_user', '')
+        friend_obj = Friend.objects.add_friend(
+            # The sender
+            request.user,
+            # The recipient
+            get_object_or_404(
+                User, username=username),
+            # Message (...or empty str)
+            message=request.data.get('message', '')
+        )
+        return Response(
+            FriendshipRequestSerializer(friend_obj).data,
+            status.HTTP_201_CREATED
+        )
 
     @ action(detail=False, serializer_class=FriendSerializer, methods=['post'])
     def remove_friend(self, request, username=None,):
@@ -96,26 +101,20 @@ class FriendViewSet(viewsets.ModelViewSet):
         The username specified in the POST data will be
         removed from the current user's friends.
         """
-        try:
-            user_friend = get_object_or_404(
-                User, username=request.data['username'])
+        user_friend = get_object_or_404(
+            User, username=request.data['username'])
 
-            if Friend.objects.remove_friend(request.user, user_friend):
-                message = 'deleted'
-                status_code = status.HTTP_204_NO_CONTENT
-            else:
-                message = 'not deleted'
-                status_code = status.HTTP_304_NOT_MODIFIED
+        if Friend.objects.remove_friend(request.user, user_friend):
+            message = 'deleted'
+            status_code = status.HTTP_204_NO_CONTENT
+        else:
+            message = 'not deleted'
+            status_code = status.HTTP_304_NOT_MODIFIED
 
-            return Response(
-                {"message": message},
-                status=status_code
-            )
-        except Exception as e:
-            return Response(
-                {'message': str(e)},
-                status.HTTP_400_BAD_REQUEST
-            )
+        return Response(
+            {"message": message},
+            status=status_code
+        )
 
     @ action(detail=False,
              serializer_class=FriendshipRequestResponseSerializer,
@@ -126,28 +125,21 @@ class FriendViewSet(viewsets.ModelViewSet):
 
         The request id specified in the URL will be accepted
         """
-        try:
-            id = request.data.get('id', None)
-            friendship_request = get_object_or_404(
-                FriendshipRequest, pk=id)
+        id = request.data.get('id', None)
+        friendship_request = get_object_or_404(
+            FriendshipRequest, pk=id)
 
-            if not friendship_request.to_user == request.user:
-                return Response(
-                    {"message": "Request for current user not found."},
-                    status.HTTP_400_BAD_REQUEST
-                )
-
-            friendship_request.accept()
+        if not friendship_request.to_user == request.user:
             return Response(
-                {"message": "Request accepted, user added to friends."},
-                status.HTTP_201_CREATED
-            )
-
-        except Exception as e:
-            return Response(
-                {'message': str(e)},
+                {"message": "Request for current user not found."},
                 status.HTTP_400_BAD_REQUEST
             )
+
+        friendship_request.accept()
+        return Response(
+            {"message": "Request accepted, user added to friends."},
+            status.HTTP_201_CREATED
+        )
 
     @ action(detail=False,
              serializer_class=FriendshipRequestResponseSerializer,
@@ -158,25 +150,20 @@ class FriendViewSet(viewsets.ModelViewSet):
 
         The request id specified in the URL will be rejected
         """
-        try:
-            id = request.data.get('id', None)
-            friendship_request = get_object_or_404(
-                FriendshipRequest, pk=id)
-            if not friendship_request.to_user == request.user:
-                return Response(
-                    {"message": "Request for current user not found."},
-                    status.HTTP_400_BAD_REQUEST
-                )
-
-            friendship_request.reject()
+        id = request.data.get('id', None)
+        friendship_request = get_object_or_404(
+            FriendshipRequest, pk=id)
+        if not friendship_request.to_user == request.user:
             return Response(
-                {
-                    "message": "Request rejected, user NOT added to friends."
-                },
-                status.HTTP_201_CREATED
-            )
-        except Exception as e:
-            return Response(
-                {'message': str(e)},
+                {"message": "Request for current user not found."},
                 status.HTTP_400_BAD_REQUEST
             )
+
+        friendship_request.reject()
+
+        return Response(
+            {
+                "message": "Request rejected, user NOT added to friends."
+            },
+            status.HTTP_201_CREATED
+        )
