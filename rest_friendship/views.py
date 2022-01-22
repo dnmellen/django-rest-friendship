@@ -93,7 +93,7 @@ class FriendViewSet(viewsets.ModelViewSet):
             status.HTTP_201_CREATED
         )
 
-    @ action(detail=True, serializer_class=FriendSerializer, methods=['post'])
+    @ action(detail=False, serializer_class=FriendSerializer, methods=['post'])
     def remove_friend(self, request, username=None,):
         """
         Deletes a friend relationship.
