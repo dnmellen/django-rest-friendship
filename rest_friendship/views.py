@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.utils.module_loading import import_string
+from html5lib import serialize
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -78,7 +79,10 @@ class FriendViewSet(viewsets.ModelViewSet):
         # Creates a friend request from POST data:
         # - username
         # - message
-        username = request.data.get('to_user', '')
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data.get('to_user')
+
         friend_obj = Friend.objects.add_friend(
             # The sender
             request.user,
