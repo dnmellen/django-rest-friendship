@@ -1,7 +1,9 @@
 django-rest-friendship
 ======================
 
-|PyPI version shields.io| |Build|
+|PyPI version shields.io| |Build| |coverage|
+
+.. |coverage| image:: https://img.shields.io/codecov/c/gh/sflems/django-rest-friendship
 
 .. |PyPI version shields.io| image:: https://img.shields.io/pypi/v/django-rest-friendship.svg
    :target: https://pypi.python.org/pypi/django-rest-friendship/
