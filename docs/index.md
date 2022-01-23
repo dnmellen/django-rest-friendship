@@ -1,6 +1,6 @@
 # django-rest-friendship
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/dnmellen/django-rest-framework?label=version)](https://github.com/sflems/django-rest-framework/releases) [![Django Tests](https://github.com/dnmellen/django-rest-friendship/actions/workflows/python-package.yml/badge.svg)](https://github.com/sflems/django-rest-friendship/actions/workflows/python-package.yml)
+![PyPI](https://img.shields.io/pypi/v/django-rest-friendship?color=blue&logo=python) [![Build](https://github.com/dnmellen/django-rest-friendship/actions/workflows/python-package.yml/badge.svg)](https://github.com/dnmellen/django-rest-friendship/actions/workflows/python-package.yml)
 
 ## Overview
 

@@ -1,7 +1,7 @@
 django-rest-friendship
 ======================
 
-|GitHub release (latest by date)| |Build|
+|pypi-version| |Build|
 
 Overview
 --------
@@ -140,7 +140,7 @@ To build the documentation:
 
    mkdocs build
 
-.. |GitHub release (latest by date)| image:: <https://img.shields.io/github/v/release/dnmellen/django-rest-framework?label=version>
-   :target: <https://github.com/sflems/django-rest-framework/releases>
-.. |Build| image:: <https://github.com/dnmellen/django-rest-friendship/actions/workflows/python-package.yml/badge.svg>
+.. |pypi-version| image:: <https://img.shields.io/pypi/v/django-rest-friendship.svg>
+   :target: <https://pypi.python.org/pypi/django-rest-friendship>
+.. |Build| image:: <https://github.com/sflems/django-rest-friendship/actions/workflows/python-package.yml/badge.svg>
    :target: <https://github.com/sflems/django-rest-friendship/actions/workflows/python-package.yml>
