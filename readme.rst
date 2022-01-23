@@ -1,8 +1,12 @@
 django-rest-friendship
 ======================
 
-.. image:: <https://img.shields.io/pypi/v/django-rest-friendship?color=blue&logo=python>   :alt: PyPI
-.. image:: <https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package>   :alt: GitHub Workflow Status
+|PyPI version shields.io| |Build|
+
+.. |PyPI version shields.io| image:: https://img.shields.io/pypi/v/django-rest-friendship.svg
+   :target: https://pypi.python.org/pypi/django-rest-friendship/
+
+.. |Build| image:: https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package   :alt: GitHub Workflow Status
 
 Overview
 --------
@@ -67,7 +71,7 @@ Get Friends List
 
 .. code:: bash
 
-   curl -LX GET <http://127.0.0.1:8000/friends/> -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b'
+   curl -LX GET http://127.0.0.1:8000/friends/ -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b'
 
    [{"id":1,"username":"testuser","email":"testuser@piboy.ca"}]
 
@@ -76,13 +80,13 @@ Add/Remove Friends
 
 .. code:: bash
 
-   curl -X POST <http://127.0.0.1:8000/friends/add_friend/> -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' --data 'to_user=testuser&message=Hello+friend'
+   curl -X POST http://127.0.0.1:8000/friends/add_friend/ -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' --data 'to_user=testuser&message=Hello+friend'
 
    {"id":4,"from_user":"scott@gmail.com","to_user":"testuser@piboy.ca","message":"Hello friend","created":"2022-01-22T04:21:43.593950Z","rejected":null,"viewed":null}
 
 .. code:: bash
 
-   curl -X POST <http://127.0.0.1:8000/friends/remove_friend/> -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' --data 'to_user=testuser'
+   curl -X POST http://127.0.0.1:8000/friends/remove_friend/ -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' --data 'to_user=testuser'
 
    [{"message": "Friend deleted"}]
 
@@ -91,7 +95,7 @@ Accept a Request with request ID
 
 .. code:: bash
 
-   curl -X POST <http://127.0.0.1:8000/friends/accept_request/> -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' --data 'id=1'
+   curl -X POST http://127.0.0.1:8000/friends/accept_request/ -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' --data 'id=1'
 
    {"message": "Request accepted, user added to friends."}
 
@@ -111,7 +115,7 @@ Run with runtests.
    ./runtests.py
 
 You can also use the excellent
-`tox <http://tox.readthedocs.org/en/latest/>`__ testing tool to run the
+`tox http://tox.readthedocs.org/en/latest/`__ testing tool to run the
 tests against all supported versions of Python and Django. Install tox
 globally, and then simply run:
 
@@ -133,7 +137,7 @@ To preview the documentation:
 .. code:: bash
 
    $ mkdocs serve
-   Running at: <http://127.0.0.1:8000/>
+   Running at: http://127.0.0.1:8000/
 
 To build the documentation:
 
