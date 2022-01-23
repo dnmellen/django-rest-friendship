@@ -4,7 +4,7 @@
 
 ## Overview
 
-An updated fork of [`django-rest-friendship`](https://github.com/dnmellen/django-rest-friendship) to create DRF endpoints for django-friendship
+DRF endpoints for django-friendship
 
 ## Requirements
 
