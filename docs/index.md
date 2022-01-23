@@ -1,6 +1,6 @@
 # django-rest-friendship
 
-![PyPI](https://img.shields.io/pypi/v/django-rest-friendship?color=blue&logo=python) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package)
+![PyPI](https://img.shields.io/pypi/v/django-rest-friendship?color=blue&logo=python) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package) ![Codecov](https://img.shields.io/codecov/c/gh/sflems/django-rest-friendship)
 
 ## Overview
 
@@ -97,10 +97,10 @@ Install testing requirements.
 pip install -r requirements.txt
 ```
 
-Run with runtests.
+Run with
 
 ```bash
-./runtests.py
+pytest --flake8
 ```
 
 You can also use the excellent [tox](http://tox.readthedocs.org/en/latest/) testing tool to run the tests against all supported versions of Python and Django. Install tox globally, and then simply run:
