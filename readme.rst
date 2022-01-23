@@ -1,7 +1,8 @@
 django-rest-friendship
 ======================
 
-|pypi-version| |Build|
+.. image:: <https://img.shields.io/pypi/v/django-rest-friendship?color=blue&logo=python>   :alt: PyPI
+.. image:: <https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package>   :alt: GitHub Workflow Status
 
 Overview
 --------
@@ -139,8 +140,3 @@ To build the documentation:
 .. code:: bash
 
    mkdocs build
-
-.. |pypi-version| image:: <https://img.shields.io/pypi/v/django-rest-friendship.svg>
-   :target: <https://pypi.python.org/pypi/django-rest-friendship>
-.. |Build| image:: <https://github.com/sflems/django-rest-friendship/actions/workflows/python-package.yml/badge.svg>
-   :target: <https://github.com/sflems/django-rest-friendship/actions/workflows/python-package.yml>

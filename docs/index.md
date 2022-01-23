@@ -1,6 +1,6 @@
 # django-rest-friendship
 
-![PyPI](https://img.shields.io/pypi/v/django-rest-friendship?color=blue&logo=python) [![Build](https://github.com/dnmellen/django-rest-friendship/actions/workflows/python-package.yml/badge.svg)](https://github.com/dnmellen/django-rest-friendship/actions/workflows/python-package.yml)
+![PyPI](https://img.shields.io/pypi/v/django-rest-friendship?color=blue&logo=python) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package)
 
 ## Overview
 
