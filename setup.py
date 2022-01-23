@@ -43,7 +43,7 @@ setup(
     description=description,
     author=author,
     author_email=author_email,
-    packages=find_packages(),
+    packages=['rest_friendship'],
     include_package_data=True,
     install_requires=[],
     classifiers=[
