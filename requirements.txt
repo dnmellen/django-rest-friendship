@@ -1,6 +1,6 @@
 # Minimum Django and REST framework version
 -e .
-Django>=4.0.1
+Django>=3.2.9
 djangorestframework>=3.13.1
 django-friendship>=1.9.4
 
@@ -8,9 +8,7 @@ django-friendship>=1.9.4
 pytest-django
 pytest-flake8
 pytest
-pytest-cov
 factory-boy
-flake8
 
 # wheel for PyPI installs
 wheel

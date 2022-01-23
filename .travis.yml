@@ -3,9 +3,8 @@ language: python
 sudo: false
 
 env:
-    - TOX_ENV=py-flake8
-    - TOX_ENV=py-docs
-    - TOX_ENV=django4.0.1-drf3.13.1
+    - TOX_ENV=py310-docs
+    - TOX_ENV=py310-django4.0.1-drf3.13.1
 
 matrix:
   fast_finish: true
