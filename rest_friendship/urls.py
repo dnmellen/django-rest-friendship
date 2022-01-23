@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from django.urls import path, include
+from rest_framework import routers
+from . import views
 
+router = routers.DefaultRouter()
+router.register('friends', views.FriendViewSet, 'friend')
 
-from .views import FriendViewSet, FriendshipRequestViewSet
-
-from rest_framework.routers import DefaultRouter
-
-
-router = DefaultRouter()
-router.register(r'friends', FriendViewSet, base_name='friends')
-router.register(r'friendrequests', FriendshipRequestViewSet, base_name='friendrequests')
-urlpatterns = router.urls
+urlpatterns = [
+    path('', include(router.urls)),
+]

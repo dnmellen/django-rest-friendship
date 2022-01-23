@@ -1,17 +1,17 @@
 # Minimum Django and REST framework version
-Django<2.0
-djangorestframework>=2.4.3
-django-friendship>=1.5.0
+-e .
+Django>=3.2.9
+djangorestframework>=3.13.1
+django-friendship>=1.9.4
 
 # Test requirements
 pytest-django
+pytest-flake8
 pytest
-pytest-cov
 factory-boy
-flake8
 
 # wheel for PyPI installs
-wheel==0.24.0
+wheel
 
 # MkDocs for documentation previews/deploys
-mkdocs==0.11.1
+mkdocs

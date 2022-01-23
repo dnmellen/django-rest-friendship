@@ -1,15 +1,22 @@
+from django.conf import settings
+
 
 def pytest_configure():
-    from django.conf import settings
 
     settings.configure(
+
+        REST_FRIENDSHIP={
+            'PERMISSION_CLASSES': [
+                'rest_framework.permissions.IsAuthenticated',
+            ],
+            'USER_SERIALIZER': 'rest_friendship.serializers.FriendSerializer',
+        },
         DEBUG_PROPAGATE_EXCEPTIONS=True,
         DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3',
                                'NAME': ':memory:'}},
         SITE_ID=1,
         SECRET_KEY='not very secret in tests',
         USE_I18N=True,
-        USE_L10N=True,
         STATIC_URL='/static/',
         ROOT_URLCONF='tests.urls',
         TEMPLATE_LOADERS=(
@@ -46,44 +53,3 @@ def pytest_configure():
             'django.contrib.auth.hashers.CryptPasswordHasher',
         ),
     )
-
-    try:
-        import oauth_provider  # NOQA
-        import oauth2  # NOQA
-    except ImportError:
-        pass
-    else:
-        settings.INSTALLED_APPS += (
-            'oauth_provider',
-        )
-
-    try:
-        import provider  # NOQA
-    except ImportError:
-        pass
-    else:
-        settings.INSTALLED_APPS += (
-            'provider',
-            'provider.oauth2',
-        )
-
-    # guardian is optional
-    try:
-        import guardian  # NOQA
-    except ImportError:
-        pass
-    else:
-        settings.ANONYMOUS_USER_ID = -1
-        settings.AUTHENTICATION_BACKENDS = (
-            'django.contrib.auth.backends.ModelBackend',
-            'guardian.backends.ObjectPermissionBackend',
-        )
-        settings.INSTALLED_APPS += (
-            'guardian',
-        )
-
-    try:
-        import django
-        django.setup()
-    except AttributeError:
-        pass
