@@ -64,7 +64,7 @@ And don't forget to add the following to your project `urls.py`
 ```bash
 curl -LX GET http://127.0.0.1:8000/friends/ -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' 
 
-[{"id":1,"username":"testuser","email":"testuser@piboy.ca"}]
+[{"id":1,"username":"testuser","email":"testuser@example.com"}]
 ```
 
 #### Add/Remove Friends
@@ -72,7 +72,7 @@ curl -LX GET http://127.0.0.1:8000/friends/ -H 'Authorization: Token 16bd63ca665
 ```bash
 curl -X POST http://127.0.0.1:8000/friends/add_friend/ -H 'Authorization: Token 16bd63ca6655a5fe8d25d7c8bb1b42605c77088b' --data 'to_user=testuser&message=Hello+friend'
 
-{"id":4,"from_user":"scott@gmail.com","to_user":"testuser@piboy.ca","message":"Hello friend","created":"2022-01-22T04:21:43.593950Z","rejected":null,"viewed":null} 
+{"id":4,"from_user":"sender@example.com","to_user":"testuser@example.com","message":"Hello friend","created":"2022-01-22T04:21:43.593950Z","rejected":null,"viewed":null} 
 ```
 
 ```bash
