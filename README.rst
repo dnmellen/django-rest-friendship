@@ -3,11 +3,11 @@ django-rest-friendship
 
 |PyPI version shields.io| |Build| |coverage|
 
-.. |coverage| image:: <https://img.shields.io/codecov/c/gh/sflems/django-rest-friendship>
+.. |coverage| image:: https://img.shields.io/codecov/c/gh/sflems/django-rest-friendship
 
-.. |PyPI version shields.io| image:: <https://img.shields.io/pypi/v/django-rest-friendship.svg>
+.. |PyPI version shields.io| image:: https://img.shields.io/pypi/v/django-rest-friendship.svg
 
-.. |Build| image:: <https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package>
+.. |Build| image:: https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package
 
 Overview
 --------
