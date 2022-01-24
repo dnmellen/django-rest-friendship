@@ -1,15 +1,14 @@
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
 recursive-include tests *.py
-recursive-include rest_friendship *.py
-recursive-include docs *.py *.txt *.rst *.conf *.css *.md
+recursive-include rest_friendship *.py _version.txt
+recursive-include docs *.rst *.css *.md
 include *.py
 include *.rst
 include *.txt
 include mkdocs.yml
 include MANIFEST.in
 include LICENSE
-include VERSION
 include pytest.ini
 include tox.ini
 prune .github

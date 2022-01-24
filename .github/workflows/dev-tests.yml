@@ -1,14 +1,14 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+# Does not change version or update codecov as opposed to main test suite
 
-name: Rest Friendship Test & Bump Version on new Tag
+name: Dev Tests
 
 on:
   push:
-    tags:
-      - '*'
+    branches: [ testing ]
   pull_request:
-    branches: [ master ]
+    branches: [ dev, testing ]
 
 jobs:
   build:
@@ -34,29 +34,9 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with tox
-      run: tox    
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
-      with:
-        python-version: "3.9"
-    - name: 'Get Previous tag'
-      id: previoustag
-      uses: "WyriHaximus/github-action-get-previous-tag@v1"
-    - name: Update VERSION file with tag.
-      run: |
-        echo ${{ steps.previoustag.outputs.tag }} > VERSION
-    - name: Commit Version to Tag Update
-      continue-on-error: true
-      run: |
-        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        git add VERSION
-        git commit -m "Auto-update VERSION" -a
-    - name: Push changes
-      continue-on-error: true
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: master
-        force: true
+    - name: Test repo with tox
+      run: tox
+    - name: Tests Coverage
+      run: coverage report
+    - name: Coverage Erase
+      run: coverage erase
