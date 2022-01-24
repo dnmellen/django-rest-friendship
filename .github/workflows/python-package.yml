@@ -40,23 +40,3 @@ jobs:
       uses: codecov/codecov-action@v2
       with:
         python-version: "3.9"
-    - name: 'Get Previous tag'
-      id: previoustag
-      uses: "WyriHaximus/github-action-get-previous-tag@v1"
-    - name: Update VERSION file with tag.
-      run: |
-        echo ${{ steps.previoustag.outputs.tag }} > VERSION
-    - name: Commit Version to Tag Update
-      continue-on-error: true
-      run: |
-        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        git add VERSION
-        git commit -m "Auto-update VERSION" -a
-    - name: Push changes
-      continue-on-error: true
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: master
-        force: true
