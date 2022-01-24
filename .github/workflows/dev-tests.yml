@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install tox tox-gh-actions flake8
+        python -m pip install tox tox-gh-actions flake8 coverage
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -37,6 +37,6 @@ jobs:
     - name: Test repo with tox
       run: tox
     - name: Tests Coverage
-      run: python3 -m coverage report
+      run: python -m coverage report
     - name: Coverage Erase
-      run: python3 -m coverage erase
+      run: python -m coverage erase
