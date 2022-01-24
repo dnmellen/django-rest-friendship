@@ -9,5 +9,7 @@ include *.txt
 include mkdocs.yml
 include MANIFEST.in
 include LICENSE
+include VERSION
 include pytest.ini
 include tox.ini
+prune .github

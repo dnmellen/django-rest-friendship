@@ -1,5 +1,4 @@
 # Minimum Django and REST framework version
--e .
 Django>=3.2.9
 djangorestframework>=3.13.1
 django-friendship>=1.9.4
