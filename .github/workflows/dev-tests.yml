@@ -37,6 +37,6 @@ jobs:
     - name: Test repo with tox
       run: tox
     - name: Tests Coverage
-      run: coverage report
+      run: python3 -m coverage report
     - name: Coverage Erase
-      run: coverage erase
+      run: python3 -m coverage erase
