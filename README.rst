@@ -8,7 +8,7 @@ django-rest-friendship
 .. |PyPI version shields.io| image:: https://img.shields.io/pypi/v/django-rest-friendship.svg
    :target: https://pypi.python.org/pypi/django-rest-friendship/
 
-.. |Build| image:: https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package   :alt: GitHub Workflow Status
+.. |Build| image:: https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package
 
 Overview
 --------
@@ -108,13 +108,13 @@ Install testing requirements.
 
 .. code:: bash
 
-   pip install -r requirements.txt
+   pip install django-rest-friendship[test]
 
-Run with runtests.
+Run with:
 
 .. code:: bash
 
-   ./runtests.py
+   pytest --flake8
 
 You can also use the excellent
 `tox http://tox.readthedocs.org/en/latest/`__ testing tool to run the
