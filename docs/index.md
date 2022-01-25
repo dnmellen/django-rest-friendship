@@ -2,8 +2,7 @@
 title: 'django-rest-friendship'
 ---
 
-![PyPI version
-shields.io](https://img.shields.io/pypi/v/django-rest-friendship.svg)
+![PyPI version shields.io](https://img.shields.io/pypi/v/django-rest-friendship.svg)
 ![Build](https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package)
 ![coverage](https://img.shields.io/codecov/c/gh/sflems/django-rest-friendship)
 
