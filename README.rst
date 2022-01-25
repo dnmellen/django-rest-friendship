@@ -43,7 +43,7 @@ Add rest_friendship to your ``INSTALLED_APPS``
    ...
    )
 
-Also add settings for ``REST_FRIENDSHIP``
+Also add settings for ``REST_FRIENDSHIP`` to your project ``settings.py``
 
 .. code:: python
 
@@ -107,7 +107,8 @@ Install testing requirements and run with ``pytest``:
 
 .. code:: bash
 
-   pip install pytest pytest-django
+   pip install django-rest-friendship[test] 
+   ...
    pytest
 
 You can also use the excellent `tox <http://tox.readthedocs.org/en/latest/>`__ testing tool to run the
@@ -125,7 +126,7 @@ To build the documentation, you’ll need to install ``mkdocs``.
 
 .. code:: bash
 
-   pip install mkdocs
+   pip install django-rest-friendship[docs]
 
 To preview the documentation:
 
