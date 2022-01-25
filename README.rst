@@ -1,13 +1,13 @@
 django-rest-friendship
 ======================
 
-|PyPI version shields.io| |Build| |coverage|
+|PyPI| |Build| |coverage|
 
-.. |coverage| image:: https://img.shields.io/codecov/c/gh/sflems/django-rest-friendship
-
-.. |PyPI version shields.io| image:: https://img.shields.io/pypi/v/django-rest-friendship.svg
+.. |PyPI| image:: https://img.shields.io/pypi/v/django-rest-friendship
 
 .. |Build| image:: https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package
+
+.. |coverage| image:: https://img.shields.io/codecov/c/gh/dnmellen/django-rest-friendship
 
 Overview
 --------
@@ -35,12 +35,12 @@ Add rest_friendship to your ``INSTALLED_APPS``
 .. code:: python
 
    INSTALLED_APPS = (
-   ...
-   'friendship',  # Django friendship
-   'rest_framework',  # Django REST Framework
-   'rest_friendship',  # Django REST Friendship
-   'rest_framework.authtoken',
-   ...
+      ...
+      'friendship',  # Django friendship
+      'rest_framework',  # Django REST Framework
+      'rest_friendship',  # Django REST Friendship
+      'rest_framework.authtoken',
+      ...
    )
 
 Also add settings for ``REST_FRIENDSHIP`` to your project ``settings.py``
@@ -108,7 +108,7 @@ Install testing requirements and run with ``pytest``:
 .. code:: bash
 
    pip install django-rest-friendship[test] 
-   ...
+   
    pytest
 
 You can also use the excellent `tox <http://tox.readthedocs.org/en/latest/>`__ testing tool to run the

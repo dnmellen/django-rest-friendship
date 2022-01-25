@@ -1,10 +1,8 @@
----
-title: 'django-rest-friendship'
----
+# django-rest-friendship
 
-![PyPI version shields.io](https://img.shields.io/pypi/v/django-rest-friendship.svg)
+![PyPI](https://img.shields.io/pypi/v/django-rest-friendship)
 ![Build](https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package)
-![coverage](https://img.shields.io/codecov/c/gh/sflems/django-rest-friendship)
+![coverage](https://img.shields.io/codecov/c/gh/dnmellen/django-rest-friendship)
 
 ## Overview
 
@@ -28,12 +26,12 @@ Add rest_friendship to your `INSTALLED_APPS`
 
 ```python
 INSTALLED_APPS = (
-   ...
-   'friendship',  # Django friendship
-   'rest_framework',  # Django REST Framework
-   'rest_friendship',  # Django REST Friendship
-   'rest_framework.authtoken',
-   ...
+      ...
+      'friendship',  # Django friendship
+      'rest_framework',  # Django REST Framework
+      'rest_friendship',  # Django REST Friendship
+      'rest_framework.authtoken',
+      ...
    )
 ```
 
@@ -96,7 +94,7 @@ Install testing requirements and run with `pytest`:
 
 ```bash
 pip install django-rest-friendship[test] 
-...
+
 pytest
 ```
 
