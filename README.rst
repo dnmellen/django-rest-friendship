@@ -6,9 +6,8 @@ django-rest-friendship
 .. |coverage| image:: https://img.shields.io/codecov/c/gh/sflems/django-rest-friendship
 
 .. |PyPI version shields.io| image:: https://img.shields.io/pypi/v/django-rest-friendship.svg
-   :target: https://pypi.python.org/pypi/django-rest-friendship/
 
-.. |Build| image:: https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package   :alt: GitHub Workflow Status
+.. |Build| image:: https://img.shields.io/github/workflow/status/dnmellen/django-rest-friendship/Python%20package
 
 Overview
 --------
@@ -35,35 +34,35 @@ Add rest_friendship to your ``INSTALLED_APPS``
 
 .. code:: python
 
-       INSTALLED_APPS = (
-       ...
-       'friendship',  # Django friendship
-       'rest_framework',  # Django REST Framework
-       'rest_friendship',  # Django REST Friendship
-       'rest_framework.authtoken',
-       ...
-       )
+   INSTALLED_APPS = (
+   ...
+   'friendship',  # Django friendship
+   'rest_framework',  # Django REST Framework
+   'rest_friendship',  # Django REST Friendship
+   'rest_framework.authtoken',
+   ...
+   )
 
 Also add settings for ``REST_FRIENDSHIP``
 
 .. code:: python
 
-       REST_FRIENDSHIP = {
-           'PERMISSION_CLASSES': [
-               'rest_framework.permissions.IsAuthenticated',
-           ],
-           'USER_SERIALIZER': 'rest_friendship.serializers.FriendSerializer',
-       },
+   REST_FRIENDSHIP = {
+      'PERMISSION_CLASSES': [
+         'rest_framework.permissions.IsAuthenticated',
+      ],
+      'USER_SERIALIZER': 'rest_friendship.serializers.FriendSerializer',
+   },
 
 And don’t forget to add the following to your project ``urls.py``
 
 .. code:: python
 
-       urlpatterns = [
-           ...
-           path('', include('rest_friendship.urls')),
-           ...
-       ]
+   urlpatterns = [
+      ...
+      path('', include('rest_friendship.urls')),
+      ...
+   ]
 
 Examples
 --------
@@ -104,20 +103,14 @@ Accept a Request with request ID
 Testing
 -------
 
-Install testing requirements.
+Install testing requirements and run with ``pytest``:
 
 .. code:: bash
 
-   pip install -r requirements.txt
+   pip install pytest pytest-django
+   pytest
 
-Run with runtests.
-
-.. code:: bash
-
-   ./runtests.py
-
-You can also use the excellent
-`tox http://tox.readthedocs.org/en/latest/`__ testing tool to run the
+You can also use the excellent `tox <http://tox.readthedocs.org/en/latest/>`__ testing tool to run the
 tests against all supported versions of Python and Django. Install tox
 globally, and then simply run:
 
@@ -139,7 +132,7 @@ To preview the documentation:
 .. code:: bash
 
    $ mkdocs serve
-   Running at: http://127.0.0.1:8000/
+   Running at: http://127.0.0.1:8000
 
 To build the documentation:
 
