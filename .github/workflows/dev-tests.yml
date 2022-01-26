@@ -38,15 +38,17 @@ jobs:
       run: tox -v
     - name: Coverage Erase
       run: tox -e clean
-    - name: 'Get Previous tag'
+  versionbump:
+    runs-on: ubuntu-latest
+    with:
+          fetch-depth: 0 # Required
+    steps:
+    - name: 'Get latest tag'
       id: previoustag
       uses: "WyriHaximus/github-action-get-previous-tag@v1"
-      with:
-        python-version: "3.10"
     - name: Update rest_friendship/__init__.py file with version tag.
       run: |
-        echo "__version__ = '"${{ steps.previoustag.outputs.tag }}"'\n" > ./rest_friendship/__init__.py
-
+        echo "__version__ = '"${{ steps.previoustag.outputs.tag }}"'" > ./rest_friendship/__init__.py
     - name: Commit files
       continue-on-error: true
       run: |
@@ -54,7 +56,6 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git add ./rest_friendship/__init__.py
         git commit -m "Auto-bump version to "${{ steps.previoustag.outputs.tag }}" TEST" -a
-
     - name: Push changes
       continue-on-error: true
       uses: ad-m/github-push-action@master
@@ -62,3 +63,4 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: testing
         force: true
+    
