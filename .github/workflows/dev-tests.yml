@@ -35,7 +35,7 @@ jobs:
       run: tox -v
     - name: Coverage Erase
       run: tox -e clean
-- name: 'Get Previous tag'
+    - name: 'Get Previous tag'
       id: previoustag
       uses: "WyriHaximus/github-action-get-previous-tag@v1"
     - name: Update rest_friendship/__init__.py file with version tag.
