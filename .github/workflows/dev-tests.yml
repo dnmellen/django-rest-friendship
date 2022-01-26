@@ -55,7 +55,7 @@ jobs:
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add ./rest_friendship/__init__.py
-        git commit -m "Auto-bump version to "${{ steps.previoustag.outputs.tag }}" TEST" -a
+        git commit -m "Auto-bump version to "${{ steps.previoustag.outputs.tag }}"" -a
     - name: Push changes
       continue-on-error: true
       uses: ad-m/github-push-action@master
