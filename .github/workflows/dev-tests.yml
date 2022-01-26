@@ -6,6 +6,8 @@ name: Dev Tests
 
 on:
   push:
+    tags:
+      - '*'
     branches: [ testing ]
   pull_request:
     branches: [ dev, testing ]
@@ -24,19 +26,42 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+        fetch-depth: 0
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install tox tox-gh-actions flake8 coverage
+        python -m pip install tox tox-gh-actions
     - name: Lint with flake8
       run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        tox -e flake8
     - name: Test repo with tox
-      run: tox
-    - name: Tests Coverage
-      run: python -m coverage report
+      run: tox -v
     - name: Coverage Erase
-      run: python -m coverage erase
+      run: tox -e clean
+  versionbump:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: 'Get latest tag'
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@v1"
+    - name: Update rest_friendship/__init__.py file with version tag.
+      run: |
+        echo "__version__ = '"${{ steps.previoustag.outputs.tag }}"'" > ./rest_friendship/__init__.py
+    - name: Commit files
+      continue-on-error: true
+      run: |
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add ./rest_friendship/__init__.py
+        git commit -m "Auto-bump version to "${{ steps.previoustag.outputs.tag }}" TEST" -a
+    - name: Push changes
+      continue-on-error: true
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: testing
+        force: true
+    

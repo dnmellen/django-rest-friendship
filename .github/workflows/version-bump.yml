@@ -1,0 +1,38 @@
+# This workflow will check the latest tag on the branch and apply it to 
+# the __init__.py file for rest_friendship
+
+name: New Tag Version Bump
+
+on:
+  push:
+    tags:
+      - '*'
+    branches: [ master ]
+
+jobs:
+  versionbump:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: 'Get latest tag'
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@v1"
+    - name: Update rest_friendship/__init__.py file with version tag.
+      run: |
+        echo "__version__ = '"${{ steps.previoustag.outputs.tag }}"'" > ./rest_friendship/__init__.py
+    - name: Commit files
+      continue-on-error: true
+      run: |
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add ./rest_friendship/__init__.py
+        git commit -m "Auto-bump version to "${{ steps.previoustag.outputs.tag }}" TEST" -a
+    - name: Push changes
+      continue-on-error: true
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: master
+        force: true
