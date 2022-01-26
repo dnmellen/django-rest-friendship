@@ -104,7 +104,7 @@ tests against all supported versions of Python and Django. Install tox
 globally, and then simply run:
 
 ```bash
-tox
+tox -s
 ```
 
 ## Documentation

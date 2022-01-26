@@ -117,7 +117,7 @@ globally, and then simply run:
 
 .. code:: bash
 
-   tox
+   tox -s
 
 Documentation
 -------------
