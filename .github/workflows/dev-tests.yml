@@ -40,9 +40,10 @@ jobs:
       run: tox -e clean
   versionbump:
     runs-on: ubuntu-latest
-    with:
-          fetch-depth: 0 # Required
     steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: 'Get latest tag'
       id: previoustag
       uses: "WyriHaximus/github-action-get-previous-tag@v1"
